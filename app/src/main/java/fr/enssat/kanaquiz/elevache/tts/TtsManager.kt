@@ -19,8 +19,9 @@ class TtsManager(context: Context) : TextToSpeech.OnInitListener {
         }
     }
 
-    fun parler(texte: String) {
+    fun parler(texte: String, vitesse: Float) {
         if (pret) {
+            tts.setSpeechRate(vitesse)
             tts.speak(texte, TextToSpeech.QUEUE_FLUSH, null, "kana")
         }
     }

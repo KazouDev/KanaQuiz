@@ -32,6 +32,8 @@ class KanaViewModel(application: Application) : AndroidViewModel(application) {
     var index by mutableIntStateOf(0)
         private set
 
+    private var compteurClics = 0
+
     fun taille(): Int {
         return when (categorie) {
             Categorie.HIRAGANA -> hiraganas.size
@@ -43,17 +45,20 @@ class KanaViewModel(application: Application) : AndroidViewModel(application) {
     fun changerCategorie(nouvelle: Categorie) {
         categorie = nouvelle
         index = 0
+        compteurClics = 0
     }
 
     fun precedent() {
         if (index > 0) {
             index--
+            compteurClics = 0
         }
     }
 
     fun suivant() {
         if (index < taille() - 1) {
             index++
+            compteurClics = 0
         }
     }
 
@@ -66,7 +71,9 @@ class KanaViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun prononcer() {
-        ttsManager.parler(caractereCourant())
+        val vitesse = if (compteurClics % 2 == 0) 1.0f else 0.5f
+        ttsManager.parler(caractereCourant(), vitesse)
+        compteurClics++
     }
 
     override fun onCleared() {
