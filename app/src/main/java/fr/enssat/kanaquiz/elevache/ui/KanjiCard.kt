@@ -21,7 +21,9 @@ import fr.enssat.kanaquiz.elevache.ui.theme.MyApplicationTheme
 @Composable
 fun KanjiCard(kanji: Kanji, modifier: Modifier = Modifier) {
     val info = kanji.info
-    val traductions = info.meanings.joinToString(", ")
+    val traductions = info.meanings
+        .filter { !it.contains("Radical") }
+        .joinToString(", ")
     val lecturesOn = info.readingsOn.joinToString("、")
     val lecturesKun = info.readingsKun.joinToString("、")
 
