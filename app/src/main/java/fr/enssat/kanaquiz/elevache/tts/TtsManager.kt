@@ -19,11 +19,13 @@ class TtsManager(context: Context) : TextToSpeech.OnInitListener {
         }
     }
 
-    fun parler(texte: String, vitesse: Float) {
-        if (pret) {
-            tts.setSpeechRate(vitesse)
-            tts.speak(texte, TextToSpeech.QUEUE_FLUSH, null, "kana")
+    fun parler(texte: String, vitesse: Float): Boolean {
+        if (!pret) {
+            return false
         }
+        tts.setSpeechRate(vitesse)
+        val resultat = tts.speak(texte, TextToSpeech.QUEUE_FLUSH, null, "kana")
+        return resultat == TextToSpeech.SUCCESS
     }
 
     fun liberer() {
