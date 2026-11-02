@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
@@ -47,6 +48,9 @@ fun KanaScreen(viewModel: KanaViewModel, modifier: Modifier = Modifier) {
                 Categorie.HIRAGANA -> KanaCard(viewModel.hiraganas[viewModel.index])
                 Categorie.KATAKANA -> KanaCard(viewModel.katakanas[viewModel.index])
                 Categorie.KANJI -> KanjiCard(viewModel.kanjis[viewModel.index])
+            }
+            FilledTonalButton(onClick = { viewModel.prononcer() }) {
+                Text("🔊 Écouter")
             }
             Text(
                 text = "${viewModel.index + 1} / ${viewModel.taille()}",

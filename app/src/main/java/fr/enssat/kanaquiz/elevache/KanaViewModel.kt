@@ -9,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import fr.enssat.kanaquiz.elevache.data.Kana
 import fr.enssat.kanaquiz.elevache.data.KanaRepository
 import fr.enssat.kanaquiz.elevache.data.Kanji
+import fr.enssat.kanaquiz.elevache.tts.TtsManager
 
 enum class Categorie(val titre: String) {
     HIRAGANA("Hiragana"),
@@ -19,6 +20,7 @@ enum class Categorie(val titre: String) {
 class KanaViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository = KanaRepository(application)
+    private val ttsManager = TtsManager(application)
 
     val hiraganas: List<Kana> = repository.getHiraganas()
     val katakanas: List<Kana> = repository.getKatakanas()
@@ -53,5 +55,22 @@ class KanaViewModel(application: Application) : AndroidViewModel(application) {
         if (index < taille() - 1) {
             index++
         }
+    }
+
+    fun caractereCourant(): String {
+        return when (categorie) {
+            Categorie.HIRAGANA -> hiraganas[index].char
+            Categorie.KATAKANA -> katakanas[index].char
+            Categorie.KANJI -> kanjis[index].char
+        }
+    }
+
+    fun prononcer() {
+        ttsManager.parler(caractereCourant())
+    }
+
+    override fun onCleared() {
+        ttsManager.liberer()
+        super.onCleared()
     }
 }
