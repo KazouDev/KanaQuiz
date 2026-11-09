@@ -21,11 +21,11 @@ import fr.enssat.kanaquiz.elevache.ui.theme.MyApplicationTheme
 @Composable
 fun KanjiCard(kanji: Kanji, modifier: Modifier = Modifier) {
     val info = kanji.info
-    val traductions = info.meanings
+    val meanings = info.meanings
         .filter { !it.contains("Radical") }
         .joinToString(", ")
-    val lecturesOn = info.readingsOn.joinToString("、")
-    val lecturesKun = info.readingsKun.joinToString("、")
+    val onReadings = info.readingsOn.joinToString("、")
+    val kunReadings = info.readingsKun.joinToString("、")
 
     Card(modifier = modifier) {
         Column(
@@ -34,13 +34,13 @@ fun KanjiCard(kanji: Kanji, modifier: Modifier = Modifier) {
         ) {
             Text(text = kanji.char, fontSize = 120.sp)
             Text(
-                text = traductions,
+                text = meanings,
                 style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "On : $lecturesOn", style = MaterialTheme.typography.bodyLarge)
-            Text(text = "Kun : $lecturesKun", style = MaterialTheme.typography.bodyLarge)
+            Text(text = "On : $onReadings", style = MaterialTheme.typography.bodyLarge)
+            Text(text = "Kun : $kunReadings", style = MaterialTheme.typography.bodyLarge)
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "Grade ${info.grade}", style = MaterialTheme.typography.labelLarge)
         }

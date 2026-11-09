@@ -23,21 +23,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import fr.enssat.kanaquiz.elevache.Categorie
+import fr.enssat.kanaquiz.elevache.Category
 import fr.enssat.kanaquiz.elevache.KanaViewModel
 
 @Composable
 fun KanaScreen(
     viewModel: KanaViewModel,
-    onCredits: () -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val erreur = viewModel.erreur
-    if (viewModel.chargement) {
+    val error = viewModel.error
+    if (viewModel.isLoading) {
         Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
-    } else if (erreur != null) {
+    } else if (error != null) {
         Box(
             modifier = modifier
                 .fillMaxSize()
@@ -45,29 +45,29 @@ fun KanaScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = erreur,
+                text = error,
                 color = MaterialTheme.colorScheme.error,
                 textAlign = TextAlign.Center
             )
         }
     } else {
-        Contenu(viewModel, onCredits, modifier)
+        Content(viewModel, onBack, modifier)
     }
 }
 
 @Composable
-private fun Contenu(
+private fun Content(
     viewModel: KanaViewModel,
-    onCredits: () -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        PrimaryTabRow(selectedTabIndex = viewModel.categorie.ordinal) {
-            for (categorie in Categorie.entries) {
+        PrimaryTabRow(selectedTabIndex = viewModel.category.ordinal) {
+            for (category in Category.entries) {
                 Tab(
-                    selected = viewModel.categorie == categorie,
-                    onClick = { viewModel.changerCategorie(categorie) },
-                    text = { Text(categorie.titre) }
+                    selected = viewModel.category == category,
+                    onClick = { viewModel.selectCategory(category) },
+                    text = { Text(category.title) }
                 )
             }
         }
@@ -81,28 +81,28 @@ private fun Contenu(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            when (viewModel.categorie) {
-                Categorie.HIRAGANA -> KanaCard(viewModel.hiraganas[viewModel.index])
-                Categorie.KATAKANA -> KanaCard(viewModel.katakanas[viewModel.index])
-                Categorie.KANJI -> KanjiCard(viewModel.kanjis[viewModel.index])
+            when (viewModel.category) {
+                Category.HIRAGANA -> KanaCard(viewModel.hiraganas[viewModel.index])
+                Category.KATAKANA -> KanaCard(viewModel.katakanas[viewModel.index])
+                Category.KANJI -> KanjiCard(viewModel.kanjis[viewModel.index])
             }
-            FilledTonalButton(onClick = { viewModel.prononcer() }) {
-                Text("🔊 Écouter")
+            FilledTonalButton(onClick = { viewModel.speak() }) {
+                Text("Écouter")
             }
-            val erreurTts = viewModel.erreurTts
-            if (erreurTts != null) {
+            val ttsError = viewModel.ttsError
+            if (ttsError != null) {
                 Text(
-                    text = erreurTts,
+                    text = ttsError,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center
                 )
             }
             Text(
-                text = "${viewModel.index + 1} / ${viewModel.taille()}",
+                text = "${viewModel.index + 1} / ${viewModel.size()}",
                 style = MaterialTheme.typography.labelLarge
             )
-            TextButton(onClick = onCredits) {
-                Text("Crédits")
+            TextButton(onClick = onBack) {
+                Text("Retour à l'accueil")
             }
         }
 
@@ -113,17 +113,17 @@ private fun Contenu(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(
-                onClick = { viewModel.precedent() },
+                onClick = { viewModel.previous() },
                 enabled = viewModel.index > 0
             ) {
-                Text("◀ Précédent")
+                Text("Précédent")
             }
             Spacer(modifier = Modifier.weight(1f))
             Button(
-                onClick = { viewModel.suivant() },
-                enabled = viewModel.index < viewModel.taille() - 1
+                onClick = { viewModel.next() },
+                enabled = viewModel.index < viewModel.size() - 1
             ) {
-                Text("Suivant ▶")
+                Text("Suivant")
             }
         }
     }

@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import fr.enssat.kanaquiz.elevache.ui.theme.MyApplicationTheme
 
 @Composable
-fun CreditsScreen(onRetour: () -> Unit, modifier: Modifier = Modifier) {
+fun CreditsScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -38,7 +38,7 @@ fun CreditsScreen(onRetour: () -> Unit, modifier: Modifier = Modifier) {
             text = "Application réalisée dans le cadre du TP Android de l'ENSSAT",
             textAlign = TextAlign.Center
         )
-        Button(onClick = onRetour) {
+        Button(onClick = onBack) {
             Text("Retour")
         }
     }
@@ -48,6 +48,6 @@ fun CreditsScreen(onRetour: () -> Unit, modifier: Modifier = Modifier) {
 @Composable
 fun CreditsScreenPreview() {
     MyApplicationTheme {
-        CreditsScreen(onRetour = {})
+        CreditsScreen(onBack = {})
     }
 }

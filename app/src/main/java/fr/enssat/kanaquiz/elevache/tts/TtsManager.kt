@@ -8,27 +8,27 @@ class TtsManager(context: Context) : TextToSpeech.OnInitListener {
 
     private val tts = TextToSpeech(context, this)
 
-    var pret = false
+    var isReady = false
         private set
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
-            val resultat = tts.setLanguage(Locale.JAPANESE)
-            pret = resultat != TextToSpeech.LANG_MISSING_DATA &&
-                resultat != TextToSpeech.LANG_NOT_SUPPORTED
+            val result = tts.setLanguage(Locale.JAPANESE)
+            isReady = result != TextToSpeech.LANG_MISSING_DATA &&
+                result != TextToSpeech.LANG_NOT_SUPPORTED
         }
     }
 
-    fun parler(texte: String, vitesse: Float): Boolean {
-        if (!pret) {
+    fun speak(text: String, rate: Float): Boolean {
+        if (!isReady) {
             return false
         }
-        tts.setSpeechRate(vitesse)
-        val resultat = tts.speak(texte, TextToSpeech.QUEUE_FLUSH, null, "kana")
-        return resultat == TextToSpeech.SUCCESS
+        tts.setSpeechRate(rate)
+        val result = tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "kana")
+        return result == TextToSpeech.SUCCESS
     }
 
-    fun liberer() {
+    fun release() {
         tts.stop()
         tts.shutdown()
     }

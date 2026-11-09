@@ -15,7 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-enum class Categorie(val titre: String) {
+enum class Category(val title: String) {
     HIRAGANA("Hiragana"),
     KATAKANA("Katakana"),
     KANJI("Kanji")
@@ -33,90 +33,90 @@ class KanaViewModel(application: Application) : AndroidViewModel(application) {
     var kanjis by mutableStateOf(emptyList<Kanji>())
         private set
 
-    var chargement by mutableStateOf(true)
+    var isLoading by mutableStateOf(true)
         private set
-    var erreur by mutableStateOf<String?>(null)
+    var error by mutableStateOf<String?>(null)
         private set
-    var erreurTts by mutableStateOf<String?>(null)
+    var ttsError by mutableStateOf<String?>(null)
         private set
 
-    var categorie by mutableStateOf(Categorie.HIRAGANA)
+    var category by mutableStateOf(Category.HIRAGANA)
         private set
 
     var index by mutableIntStateOf(0)
         private set
 
-    private var compteurClics = 0
+    private var clickCount = 0
 
     init {
-        charger()
+        load()
     }
 
-    private fun charger() {
+    private fun load() {
         viewModelScope.launch {
             try {
-                val nouveauxHiraganas = withContext(Dispatchers.IO) { repository.getHiraganas() }
-                val nouveauxKatakanas = withContext(Dispatchers.IO) { repository.getKatakanas() }
-                val nouveauxKanjis = withContext(Dispatchers.IO) { repository.getKanjis() }
-                hiraganas = nouveauxHiraganas
-                katakanas = nouveauxKatakanas
-                kanjis = nouveauxKanjis
+                val newHiraganas = withContext(Dispatchers.IO) { repository.getHiraganas() }
+                val newKatakanas = withContext(Dispatchers.IO) { repository.getKatakanas() }
+                val newKanjis = withContext(Dispatchers.IO) { repository.getKanjis() }
+                hiraganas = newHiraganas
+                katakanas = newKatakanas
+                kanjis = newKanjis
             } catch (e: Exception) {
-                erreur = "Impossible de charger les données : ${e.message}"
+                error = "Impossible de charger les données : ${e.message}"
             }
-            chargement = false
+            isLoading = false
         }
     }
 
-    fun taille(): Int {
-        return when (categorie) {
-            Categorie.HIRAGANA -> hiraganas.size
-            Categorie.KATAKANA -> katakanas.size
-            Categorie.KANJI -> kanjis.size
+    fun size(): Int {
+        return when (category) {
+            Category.HIRAGANA -> hiraganas.size
+            Category.KATAKANA -> katakanas.size
+            Category.KANJI -> kanjis.size
         }
     }
 
-    fun changerCategorie(nouvelle: Categorie) {
-        categorie = nouvelle
+    fun selectCategory(newCategory: Category) {
+        category = newCategory
         index = 0
-        compteurClics = 0
+        clickCount = 0
     }
 
-    fun precedent() {
+    fun previous() {
         if (index > 0) {
             index--
-            compteurClics = 0
+            clickCount = 0
         }
     }
 
-    fun suivant() {
-        if (index < taille() - 1) {
+    fun next() {
+        if (index < size() - 1) {
             index++
-            compteurClics = 0
+            clickCount = 0
         }
     }
 
-    fun caractereCourant(): String {
-        return when (categorie) {
-            Categorie.HIRAGANA -> hiraganas[index].char
-            Categorie.KATAKANA -> katakanas[index].char
-            Categorie.KANJI -> kanjis[index].char
+    fun currentCharacter(): String {
+        return when (category) {
+            Category.HIRAGANA -> hiraganas[index].char
+            Category.KATAKANA -> katakanas[index].char
+            Category.KANJI -> kanjis[index].char
         }
     }
 
-    fun prononcer() {
-        val vitesse = if (compteurClics % 2 == 0) 1.0f else 0.5f
-        val reussi = ttsManager.parler(caractereCourant(), vitesse)
-        if (reussi) {
-            erreurTts = null
-            compteurClics++
+    fun speak() {
+        val rate = if (clickCount % 2 == 0) 1.0f else 0.5f
+        val success = ttsManager.speak(currentCharacter(), rate)
+        if (success) {
+            ttsError = null
+            clickCount++
         } else {
-            erreurTts = "Synthèse vocale japonaise indisponible. Vérifiez les données vocales dans les paramètres."
+            ttsError = "Synthèse vocale japonaise indisponible. Vérifiez les données vocales dans les paramètres."
         }
     }
 
     override fun onCleared() {
-        ttsManager.liberer()
+        ttsManager.release()
         super.onCleared()
     }
 }

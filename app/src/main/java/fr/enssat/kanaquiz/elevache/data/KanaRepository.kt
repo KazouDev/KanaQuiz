@@ -24,27 +24,27 @@ class KanaRepository(private val context: Context) {
     }
 
     private fun getKanas(type: String): List<Kana> {
-        val texte = loadJsonFromRaw(R.raw.kana_data)
-        val donnees = json.decodeFromString<Map<String, Map<String, Map<String, List<Kana>>>>>(texte)
+        val text = loadJsonFromRaw(R.raw.kana_data)
+        val data = json.decodeFromString<Map<String, Map<String, Map<String, List<Kana>>>>>(text)
 
-        val resultat = mutableListOf<Kana>()
-        val categories = donnees.getValue(type)
-        for (lignes in categories.values) {
-            for (kanas in lignes.values) {
-                resultat.addAll(kanas)
+        val result = mutableListOf<Kana>()
+        val groups = data.getValue(type)
+        for (lines in groups.values) {
+            for (kanas in lines.values) {
+                result.addAll(kanas)
             }
         }
-        return resultat
+        return result
     }
 
     fun getKanjis(): List<Kanji> {
-        val texte = loadJsonFromRaw(R.raw.kanji_jouyou)
-        val donnees = json.decodeFromString<Map<String, KanjiInfo>>(texte)
+        val text = loadJsonFromRaw(R.raw.kanji_jouyou)
+        val data = json.decodeFromString<Map<String, KanjiInfo>>(text)
 
-        val resultat = mutableListOf<Kanji>()
-        for ((caractere, info) in donnees) {
-            resultat.add(Kanji(caractere, info))
+        val result = mutableListOf<Kanji>()
+        for ((character, info) in data) {
+            result.add(Kanji(character, info))
         }
-        return resultat
+        return result
     }
 }

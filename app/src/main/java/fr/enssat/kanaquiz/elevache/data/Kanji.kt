@@ -16,4 +16,13 @@ data class KanjiInfo(
 data class Kanji(
     val char: String,
     val info: KanjiInfo
-)
+) {
+    fun meaning(): String {
+        return info.meanings.firstOrNull { !it.contains("Radical") } ?: info.meanings.first()
+    }
+
+    fun reading(): String {
+        val kunReadings = info.readingsKun.map { it.replace(".", "").replace("-", "") }
+        return (info.readingsOn + kunReadings).first()
+    }
+}
